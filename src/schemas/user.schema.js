@@ -1,27 +1,25 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
+import { Genders, Roles } from '../enums/index.js';
 
-const userSchema = new mongoose.Schema(
-    {
-        fullname: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        phone: {
-            type: String,
-            required: true,
-            unique: true
-        },
-        role: {
-            type: String,
-            enum: ["salonchi", "client"],
-            default: "client"
-        }
-    },
-    { 
-        timestamps: true,
-        versionKey: false
+const userSchema = new Schema({
+    fullName: { type: String },
+    phoneNumber: { type: String, required: true, unique: true },
+    email: { type: String, unique: true },
+    username: { type: String, unique: true },
+    hashedPassword: { type: String, required: true },
+    isActive: { type: Boolean, default: true },
+    gender: { type: String, enum: [Genders.MALE, Genders.FEMALE] },
+    role: {
+        type: String, enum: [
+            Roles.SUPERADMIN,
+            Roles.ADMIN,
+            Roles.SELLER,
+            Roles.CUSTOMER
+        ], required: true
     }
-);
+}, {
+    versionKey: false,
+    timestamps: true
+});
 
-export const User = mongoose.model("User", userSchema);
+export default model('User', userSchema);

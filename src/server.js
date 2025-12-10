@@ -1,18 +1,21 @@
 import express from "express";
-import dotenv from "dotenv";
+import { envConfig } from "./config/index.js";
 import { connectDB } from "./config/db.js";
-import router from "./router/index.routes.js";              
-import { errorHandler } from "./middleware/error-handle.js"; 
-dotenv.config();
+
+import mainRouter from "./router/index.routes.js";
+import { errorHandler } from "./middlewares/error-handle.js";
+import { createSuperAdmin } from "./helpers/create-superadmin.js";
 
 const app = express();
 app.use(express.json());
 
 connectDB();
-app.use("/api", router);
+createSuperAdmin();
+app.use("/api", mainRouter);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-    console.log(`Server running on port: ${PORT}`)
-);
+const PORT = envConfig.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
